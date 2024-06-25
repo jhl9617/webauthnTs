@@ -1,179 +1,257 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://unpkg.com/buefy@0.9.23/dist/buefy.min.css">
-    <link rel="stylesheet" href="theme.css">
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/buefy@0.9.23/dist/buefy.min.css"
+    />
+    <link rel="stylesheet" href="theme.css" />
+  </head>
 
-<body>
-<main id="app" class="container">
-
-    <header class="m-3" style="display:flex; justify-content: center; flex-wrap: wrap;">
-        <img src="img/banner-playground.svg" alt="banner" style="max-height: 300px" />
+  <body>
+    <main id="app" class="container">
+      <header
+        class="m-3"
+        style="display: flex; justify-content: center; flex-wrap: wrap"
+      >
+        <img
+          src="img/banner-playground.svg"
+          alt="banner"
+          style="max-height: 300px"
+        />
         <div class="col p-3">
-            <h1 class="title">Passwordless.ID /</h1>
-            <h1 class="title">Webauthn Playground</h1>
+          <h1 class="title">Passwordless.ID /</h1>
+          <h1 class="title">Webauthn Playground</h1>
         </div>
-    </header>
+      </header>
 
-    <p class="mt-5 has-text-centered">This is a playground for <a href="https://www.npmjs.com/package/@passwordless-id/webauthn">the webauthn wrapper library</a>. Nothing here is sent to any server, everything runs locally.</p>
+      <p class="mt-5 has-text-centered">
+        This is a playground for
+        <a href="https://www.npmjs.com/package/@passwordless-id/webauthn"
+          >the webauthn wrapper library</a
+        >. Nothing here is sent to any server, everything runs locally.
+      </p>
 
-
-    <section id="register-browser">
+      <section id="register-browser">
         <header class="with-big-icon">
-            <img src="img/icon_register.svg"/>
-            <h2 class="title">Registration</h2>
+          <img src="img/icon_register.svg" />
+          <h2 class="title">등록 Registration</h2>
         </header>
 
         <b-field label="Username" horizontal custom-class="required">
-            <b-input v-model="registration.username" placeholder="Username or E-Mail"></b-input>
-            <div class="hint">A username, email or other identifier</div>
+          <b-input
+            v-model="registration.username"
+            placeholder="Username or E-Mail"
+          ></b-input>
+          <div class="hint">사용자 이름, 이메일 또는 기타 식별자</div>
         </b-field>
 
         <b-field label="Challenge" horizontal custom-class="required">
-            <b-field>
-                <b-input v-model="registration.challenge" placeholder="Challenge" expanded></b-input>
-                <p class="control">
-                    <b-button type="is-primary" label="&#x21bb;" @click="registration.challenge = newChallenge()"/>
-                </p>
-            </b-field>
-            <div class="hint">A server-side randomly generated nonce, base64url encoded.</div>
+          <b-field>
+            <b-input
+              v-model="registration.challenge"
+              placeholder="Challenge"
+              expanded
+            ></b-input>
+            <p class="control">
+              <b-button
+                type="is-primary"
+                label="&#x21bb;"
+                @click="registration.challenge = newChallenge()"
+              />
+            </p>
+          </b-field>
+          <div class="hint">
+            서버 측에서 무작위로 생성된 nonce, base64url 인코딩됨.
+          </div>
         </b-field>
 
-
         <b-field label="authenticatorType" horizontal>
-            <b-select v-model="registration.options.authenticatorType" expanded>
-                <option>auto</option>
-                <option>local</option>
-                <option>roaming</option>
-                <option>both</option>
-            </b-select>
-            <div class="hint">Which device to use as authenticator.</div>
+          <b-select v-model="registration.options.authenticatorType" expanded>
+            <option>auto</option>
+            <option>local</option>
+            <option>roaming</option>
+            <option>both</option>
+          </b-select>
+          <div class="hint">인증기로 사용할 장치.</div>
         </b-field>
 
         <b-field label="userVerification" horizontal>
-            <b-select v-model="registration.options.userVerification" expanded>
-                <option>required</option>
-                <option>preferred</option>
-                <option>discouraged</option>
-            </b-select>
-            <div class="hint">Whether a biometric/PIN check is required or not. This filters out security keys not having this capability.</div>
+          <b-select v-model="registration.options.userVerification" expanded>
+            <option>required</option>
+            <option>preferred</option>
+            <option>discouraged</option>
+          </b-select>
+          <div class="hint">
+            바이오메트릭/핀 검사가 필요한지 여부. 이 기능이 없는 보안 키는
+            필터링됩니다.
+          </div>
         </b-field>
-        
+
         <b-field label="discoverable" horizontal>
-            <b-select v-model="registration.options.discoverable" expanded>
-                <option>required</option>
-                <option>preferred</option>
-                <option>discouraged</option>
-            </b-select>
-            <div class="hint">
-                A "discoverable" credential can be selected using `authenticate(...)` without providing credential IDs.
-                Instead, a native pop-up will appear for user selection.
-                This may have an impact on the "passkeys" user experience and syncing behavior of the key.
-            </div>
+          <b-select v-model="registration.options.discoverable" expanded>
+            <option>required</option>
+            <option>preferred</option>
+            <option>discouraged</option>
+          </b-select>
+          <div class="hint">
+            "discoverable" 자격 증명은 자격 증명 ID를 제공하지 않고
+            `authenticate(...)`를 사용하여 선택할 수 있습니다. 대신 사용자
+            선택을 위한 기본 팝업이 나타납니다. 이는 "패스키" 사용자 경험 및
+            키의 동기화 동작에 영향을 미칠 수 있습니다.
+          </div>
         </b-field>
 
         <b-field label="Timeout" horizontal>
-            <b-input v-model="registration.options.timeout" placeholder="60000" expanded></b-input>
-            <div class="hint">Number of milliseconds the user has to respond to the biometric/PIN check.</div>
+          <b-input
+            v-model="registration.options.timeout"
+            placeholder="60000"
+            expanded
+          ></b-input>
+          <div class="hint">
+            사용자가 바이오메트릭/핀 검사에 응답할 수 있는 밀리초 단위의 시간.
+          </div>
         </b-field>
 
         <b-field label="debug" horizontal>
-            <b-checkbox v-model="registration.options.debug" expanded></b-checkbox>
+          <b-checkbox
+            v-model="registration.options.debug"
+            expanded
+          ></b-checkbox>
         </b-field>
 
         <b-field label="attestation" horizontal>
-            <b-checkbox v-model="registration.options.attestation" expanded></b-checkbox>
-            <div class="hint">
-                <p>If enabled, the device attestation and clientData will be provided as base64 encoded binary data.
-                    Note that this may impact the authenticator information available or the UX depending on the platform.</p>
-            </div>
+          <b-checkbox
+            v-model="registration.options.attestation"
+            expanded
+          ></b-checkbox>
+          <div class="hint">
+            <p>
+              활성화된 경우, 장치 인증 및 clientData가 base64 인코딩된 바이너리
+              데이터로 제공됩니다. 이로 인해 인증기 정보 또는 UX에 영향이 있을
+              수 있습니다.
+            </p>
+          </div>
         </b-field>
 
-        <pre>await client.register("{{registration.username}}", "{{registration.challenge}}", {{registration.options}})</pre>
-        
-        <b-button class="my-3" type="is-primary" @click="register()">Register device</b-button>
+        <pre>
+await client.register("{{registration.username}}", "{{registration.challenge}}", {{registration.options}})</pre
+        >
+
+        <b-button class="my-3" type="is-primary" @click="register()"
+          >장치 등록</b-button
+        >
 
         <pre>{{registration.result ?? '...'}}</pre>
-        
-        <hr/>
 
-        <p>And on the server side, verifying the registration leads to:</p>
-        
-        <pre>await server.verifyRegistration(registration, {challenge: "{{registration.challenge}}", origin: "{{origin}}"})</pre>
+        <hr />
 
-        <p>Resulting into:</p>
-        
+        <p>서버 측에서 등록을 검증하면 다음과 같이 됩니다:</p>
+
+        <pre>
+await server.verifyRegistration(registration, {challenge: "{{registration.challenge}}", origin: "{{origin}}"})</pre
+        >
+
+        <p>결과:</p>
+
         <pre>{{registration.parsed ?? '...'}}</pre>
-        
+
         <div class="notification is-warning" v-if="registration.parsed">
-            <p>At this point, you should store the `credential` and associate it with the user account. You will need it later to verify authentication attempts.</p>
+          <p>
+            이 시점에서 `credential`을 저장하고 사용자 계정에 연관시켜야 합니다.
+            이후 인증 시도 시 이를 검증하는 데 필요합니다.
+          </p>
         </div>
-        
-    </section>
+      </section>
 
-
-    <section>
+      <section>
         <header class="with-big-icon">
-            <img src="img/icon_authenticate.svg"/>
-            <h2 class="title">Authentication</h2>
+          <img src="img/icon_authenticate.svg" />
+          <h2 class="title">인증 Authentication</h2>
         </header>
 
         <b-field label="credentialId" horizontal custom-class="required">
-            <b-input v-model="authentication.credentialId" placeholder="Credential ID"></b-input>
-            <div></div>
+          <b-input
+            v-model="authentication.credentialId"
+            placeholder="Credential ID"
+          ></b-input>
+          <div></div>
         </b-field>
 
         <b-field label="challenge" horizontal custom-class="required">
-            <b-field>
-                <b-input v-model="authentication.challenge" placeholder="Challenge" expanded></b-input>
-                <p class="control">
-                    <b-button type="is-primary" label="&#x21bb;" @click="authentication.challenge = newChallenge()"/>
-                </p>
-            </b-field>
-            <div class="hint">A server-side randomly generated nonce, base64url encoded.</div>
+          <b-field>
+            <b-input
+              v-model="authentication.challenge"
+              placeholder="Challenge"
+              expanded
+            ></b-input>
+            <p class="control">
+              <b-button
+                type="is-primary"
+                label="&#x21bb;"
+                @click="authentication.challenge = newChallenge()"
+              />
+            </p>
+          </b-field>
+          <div class="hint">
+            서버 측에서 무작위로 생성된 nonce, base64url 인코딩됨.
+          </div>
         </b-field>
 
         <b-field label="authenticatorType" horizontal>
-            <b-select v-model="authentication.options.authenticatorType" expanded>
-                <option>auto</option>
-                <option>local</option>
-                <option>roaming</option>
-                <option>both</option>
-            </b-select>
-            <div class="hint">Which device to use as authenticator.</div>
+          <b-select v-model="authentication.options.authenticatorType" expanded>
+            <option>auto</option>
+            <option>local</option>
+            <option>roaming</option>
+            <option>both</option>
+          </b-select>
+          <div class="hint">인증기로 사용할 장치.</div>
         </b-field>
 
         <b-field label="timeout" horizontal>
-            <b-input v-model="authentication.options.timeout" placeholder="60000" expanded></b-input>
-            <div class="hint">Number of milliseconds the user has to respond to the biometric/PIN check.</div>
+          <b-input
+            v-model="authentication.options.timeout"
+            placeholder="60000"
+            expanded
+          ></b-input>
+          <div class="hint">
+            사용자가 바이오메트릭/핀 검사에 응답할 수 있는 밀리초 단위의 시간.
+          </div>
         </b-field>
 
         <b-field label="userVerification" horizontal>
-            <b-select v-model="authentication.options.userVerification" expanded>
-                <option>required</option>
-                <option>preferred</option>
-                <option>discouraged</option>
-            </b-select>
-            <div class="hint">Whether a biometric/PIN check is required or not. This filters out security keys not having this capability.</div>
+          <b-select v-model="authentication.options.userVerification" expanded>
+            <option>required</option>
+            <option>preferred</option>
+            <option>discouraged</option>
+          </b-select>
+          <div class="hint">
+            바이오메트릭/핀 검사가 필요한지 여부. 이 기능이 없는 보안 키는
+            필터링됩니다.
+          </div>
         </b-field>
 
         <b-field label="debug" horizontal>
-            <b-checkbox v-model="authentication.options.debug" expanded></b-checkbox>
+          <b-checkbox
+            v-model="authentication.options.debug"
+            expanded
+          ></b-checkbox>
         </b-field>
 
-        <pre>webauthn.authenticate(["{{authentication.credentialId}}"], "{{authentication.challenge}}", {{authentication.options}})</pre>
+        <pre>
+webauthn.authenticate(["{{authentication.credentialId}}"], "{{authentication.challenge}}", {{authentication.options}})</pre
+        >
 
         <b-button type="is-primary" @click="login()">Login</b-button>
 
         <pre>{{authentication.result ?? '...'}}</pre>
-        
-        <hr/>
 
-        <p>And on the server side, verifying the authentication leads to:</p>
-        
+        <hr />
+
+        <p>서버 측에서 인증을 검증하면 다음과 같이 됩니다:</p>
+
         <pre>
 const credentialKey = {
     id: "{{registration?.parsed?.credential?.id ?? '...'}}",
@@ -191,76 +269,93 @@ const expected = {
 const verified = await server.verifyAuthentication(res, credentialKey, expected)
         </pre>
 
-        <p>Resulting into:</p>
-        
+        <p>결과:</p>
+
         <pre>{{authentication.parsed ?? '...'}}</pre>
 
         <div class="notification is-success" v-if="authentication.parsed">
-            <p>Please note that the parsed result is returned for the sake of completeness. It is already verified, including the signature.</p>
+          <p>
+            완전성을 위해 구문 분석된 결과가 반환됩니다. 서명 포함 모든 것이
+            이미 검증되었습니다.
+          </p>
         </div>
-    </section>
+      </section>
 
-
-    <section>
+      <section>
         <header class="with-big-icon">
-            <img src="img/icon_validate.svg"/>
-            <h2 class="title">Signature validation</h2>
+          <img src="img/icon_validate.svg" />
+          <h2 class="title">서명 검증</h2>
         </header>
-        <p>This part is mainly for debugging purposes or validation.</p>
-        <hr/>
-
+        <p>이 부분은 주로 디버깅 목적 또는 검증을 위한 것입니다.</p>
+        <hr />
 
         <b-field label="Algorithm" horizontal>
-            <b-select v-model="verification.algorithm" expanded>
-                <option>RS256</option>
-                <option>ES256</option>
-            </b-select>
-            <div class="hint">The algorithm used for the public key created during registration.</div>
+          <b-select v-model="verification.algorithm" expanded>
+            <option>RS256</option>
+            <option>ES256</option>
+          </b-select>
+          <div class="hint">등록 중에 생성된 공개 키에 사용된 알고리즘.</div>
         </b-field>
 
         <b-field label="PublicKey" horizontal>
-            <b-input v-model="verification.publicKey" type="textarea"></b-input>
-            <div class="hint">The public key created during registration.</div>
+          <b-input v-model="verification.publicKey" type="textarea"></b-input>
+          <div class="hint">등록 중에 생성된 공개 키.</div>
         </b-field>
 
-        <hr/>
+        <hr />
 
         <b-field label="AuthenticatorData" horizontal>
-            <b-input v-model="verification.authenticatorData" type="textarea"></b-input>
-            <div class="hint"><pre v-if="verification.authenticatorData">{{parseAuthData(verification.authenticatorData)}}</pre></div>
+          <b-input
+            v-model="verification.authenticatorData"
+            type="textarea"
+          ></b-input>
+          <div class="hint">
+            <pre v-if="verification.authenticatorData">
+{{parseAuthData(verification.authenticatorData)}}</pre
+            >
+          </div>
         </b-field>
 
         <b-field label="ClientData" horizontal>
-            <b-input v-model="verification.clientData" type="textarea"></b-input>
-            <div class="hint"><pre v-if="verification.clientData">{{parseClientData(verification.clientData)}}</pre></div>
+          <b-input v-model="verification.clientData" type="textarea"></b-input>
+          <div class="hint">
+            <pre v-if="verification.clientData">
+{{parseClientData(verification.clientData)}}</pre
+            >
+          </div>
         </b-field>
 
         <b-field label="Signature" horizontal>
-            <b-input v-model="verification.signature" type="textarea"></b-input>
-            <div class="hint">
-                <p>signature = sign(algorithm, publicKey, authenticatorData + sha256(clientData))</p>
-            </div>
+          <b-input v-model="verification.signature" type="textarea"></b-input>
+          <div class="hint">
+            <p>
+              signature = sign(algorithm, publicKey, authenticatorData +
+              sha256(clientData))
+            </p>
+          </div>
         </b-field>
 
         <b-field horizontal>
-            <b-button type="is-primary" @click="verifySignature()">Verify</b-button>
-            <div class="hint message" :class="{'is-success': verification.isValid, 'is-danger': !verification.isValid}"
-            v-if="verification.isValid !== null">
+          <b-button type="is-primary" @click="verifySignature()"
+            >Verify</b-button
+          >
+          <div
+            class="hint message"
+            :class="{'is-success': verification.isValid, 'is-danger': !verification.isValid}"
+            v-if="verification.isValid !== null"
+          >
             <div class="message-body">
-                Signature is {{verification.isValid ? 'valid' : 'invalid'}}
+              Signature is {{verification.isValid ? 'valid' : 'invalid'}}
             </div>
-        </div>
+          </div>
         </b-field>
+      </section>
+    </main>
 
-        
-    </section>
+    <script src="https://unpkg.com/vue@2.7.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/buefy@0.9.23/dist/buefy.min.js"></script>
+    <script src="https://unpkg.com/browse/axios@1.4.0/dist/axios.min.js"></script>
 
-</main>
-
-<script src="https://unpkg.com/vue@2.7.14/dist/vue.min.js"></script>
-<script src="https://unpkg.com/buefy@0.9.23/dist/buefy.min.js"></script>
-<script src="https://unpkg.com/browse/axios@1.4.0/dist/axios.min.js"></script>
-
-<script type="module" src="js/playground.js"></script>
-</body>
+    <script type="module" src="js/playground.js"></script>
+  </body>
 </html>
